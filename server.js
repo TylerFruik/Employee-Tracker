@@ -39,6 +39,93 @@ function init() {
         ]
       }
   ])
+
+  .then((answer) => {
+    if (answer.choice ===choiceList[0]) {
+      db.query('SELECT * FROM employee', (err, rows => {
+        if (err) {
+          console.error('Error executing the query: ' + err.stack);
+          return;
+        }
+        console.table(rows);
+        init()
+      }));
+    } else if (answer.choice === choiceList[1]) {
+        inquirer
+          .prompt([
+            {
+              type: 'input',
+              message: 'What is the employee\'s first name?',
+              name: 'firstName',
+            },
+            {
+              type: 'input',
+              message: 'What is the employee\'s last name?',
+              name: 'lastName',
+            },
+            {
+              type: 'list',
+              message: 'What is the employee\'s role ID?',
+              name: 'roleId',
+              choices: [1,2,3,4,5,6,7,8]
+            },
+            {
+              type: 'list',
+              message: 'Who is the employee\'s manager?',
+              name: 'managerId',
+              choices: [1,3,5,7]
+            }
+          ])
+          .then(data => {
+            db.query('INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?, ?, ?, ?)', [data.firstName, data.lastName, data.roleId, data.managerId], (err, rows) => {
+              if (err) {
+                console.error('Error executing the query: ' + err.stack);
+                return;
+              }
+              console.log('Employee successfully added');
+              init();
+            });
+          });
+    } else if (answer.choice === choiceList[2]) {
+        inquirer
+          .prompt([
+            {
+              type: 'list',
+              message: 'Select the employee to update:',
+              name: 'employeeName',
+              choices: ['John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik', 'Kunal Singh', 'Malia Brown', 'Sarah Lourd', 'Tom Allen']
+            },
+            {
+              type: 'list',
+              message: 'Select the new role for the employee:',
+              name: 'roleId',
+              choices: [1,2,3,4,5,6,7,8]
+            }
+          ])
+          .then(data => {
+            const [firstName, lastName] = data.employeeName.split(' ');
+            const updateQuery = 'UPDATE employee SET roles_id = ? WHERE first_name = ? AND last_name = ?';
+            const updateParams = [data.roleId, firstName, lastName];
+
+            db.query(updateQuery, updateParams, (err, result) => {
+              if (err) {
+                console.error('Error executing the update query:', err);
+                return;
+              }
+              console.log('Employee role successfully updated');
+              init();
+            });
+          });
+    } else if (answer.choice === choiceList[3]) {
+      
+    } else if (answer.choice === choiceList[4]) {
+      
+    } else if (answer.choice === choiceList[5]) {
+      
+    } else if (answer.choice === choiceList[6]) {
+      
+    }
+  })
 }
 
 init()

@@ -117,15 +117,77 @@ function init() {
             });
           });
     } else if (answer.choice === choiceList[3]) {
-      
+      db.query('SELECT * FROM roles', (err, rows) => {
+        if (err) {
+          console.error('Error executing the query: ' + err.stack);
+          return;
+        }
+        console.table(rows);
+        init()
+      });
     } else if (answer.choice === choiceList[4]) {
-      
+      inquirer
+        .prompt([
+          {
+            type: 'input',
+            message: 'What is the role name?',
+            name: 'roleName',
+          },
+          {
+            type: 'input',
+            message: 'What is the role salary?',
+            name: 'salary',
+          },
+          {
+            type: 'list',
+            message: 'What department ID does the role belong to?',
+            name: 'datdId',
+            choices: [1,2,3,4]
+          }
+        ])
+        .then(data => {
+          db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [data.roleName, data.salary, data.deptId], (err, rows) => {
+            if (err) {
+              console.error('Error executing the query: ' + err.stack);
+              return;
+            }
+            console.log('Role successfully added');
+            init();
+          });
+        });
     } else if (answer.choice === choiceList[5]) {
-      
+      db.query('SELECT * FROM department', (err, rows) => {
+        if (err) {
+          console.error('Error executing the query: ' + err.stack);
+          return;
+        }
+        console.table(rows);
+        init();
+      });
     } else if (answer.choice === choiceList[6]) {
-      
+      inquirer
+        .prompt([
+          {
+            type: 'input',
+            message: 'What is the department name?',
+            name: 'departmentName',
+          }
+        ])
+        .then(data => {
+          db.query('INSERT INTO department (department_name) VALUES (?)', [data.departmentName], (err, rows) => {
+            if (err) {
+              console.error('Error executing the query: ' + err.stack);
+              return;
+            }
+            console.log('Department successfully added');
+            init();
+          });
+        });
     }
-  })
+  });
 }
 
-init()
+db.connect(err => {
+  if (err) throw err;
+  init();
+});

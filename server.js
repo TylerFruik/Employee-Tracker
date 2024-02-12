@@ -15,7 +15,7 @@ const db = mysql.createConnection(
   {
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'adminpassword',
     database: 'employee_db'
   },
   console.log('Connected to the employee_db database.')
@@ -42,14 +42,14 @@ function init() {
 
   .then((answer) => {
     if (answer.choice ===choiceList[0]) {
-      db.query('SELECT * FROM employee', (err, rows => {
+      db.query('SELECT * FROM employee', (err, rows) => {
         if (err) {
           console.error('Error executing the query: ' + err.stack);
           return;
         }
         console.table(rows);
         init()
-      }));
+      });
     } else if (answer.choice === choiceList[1]) {
         inquirer
           .prompt([
